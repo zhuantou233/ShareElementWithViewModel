@@ -1,0 +1,32 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="data"
+            type="us.zoom.shareelementwithviewmodel.data.model.Photo" />
+
+        <variable
+            name="listener"
+            type="us.zoom.shareelementwithviewmodel.ui.listener.OnGlideRequestListener" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/image_height"
+        android:foreground="@drawable/grey_ripple"
+        android:stateListAnimator="@animator/raise"
+        android:transitionGroup="true">
+
+        <ImageView
+            android:id="@+id/photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:transitionName="@{@string/transition_photo + data.id}"
+            app:glideListener="@{listener}"
+            app:imageUrl="@{data}" />
+
+    </FrameLayout>
+</layout>
