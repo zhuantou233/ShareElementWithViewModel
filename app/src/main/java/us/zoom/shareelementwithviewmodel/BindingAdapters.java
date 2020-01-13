@@ -20,7 +20,7 @@ import java.util.List;
 import us.zoom.shareelementwithviewmodel.data.model.Photo;
 import us.zoom.shareelementwithviewmodel.ui.ImageSize;
 import us.zoom.shareelementwithviewmodel.ui.listener.OnGlideRequestListener;
-import us.zoom.shareelementwithviewmodel.ui.grid.PhotoAdapter;
+import us.zoom.shareelementwithviewmodel.ui.grid.GridPhotoAdapter;
 
 /**
  * Created by Tao Zhou on 2020/1/8
@@ -30,7 +30,7 @@ public class BindingAdapters {
 
     @BindingAdapter("listData")
     public static void bindRecyclerView(RecyclerView recyclerView, List<Photo> data) {
-        PhotoAdapter adapter = (PhotoAdapter) recyclerView.getAdapter();
+        GridPhotoAdapter adapter = (GridPhotoAdapter) recyclerView.getAdapter();
         assert adapter != null;
         adapter.submitList(data);
     }
@@ -44,12 +44,12 @@ public class BindingAdapters {
         }
     }
 
-    @BindingAdapter(value = {"imageUrl", "glideListener"}, requireAll = true)
+    @BindingAdapter(value = {"imageUrl", "glideListener"})
     public static void bindImage(ImageView imageView, Photo photo, OnGlideRequestListener listener) {
         int requestedPhotoWidth = imageView.getContext().getResources().getDisplayMetrics().widthPixels;
         Glide.with(imageView.getContext())
                 .load(photo.getPhotoUrl(requestedPhotoWidth))
-                .placeholder(R.color.placeholder)
+                .placeholder(R.drawable.ic_launcher_foreground)
                 .override(ImageSize.NORMAL[0], ImageSize.NORMAL[1])
                 .addListener(new RequestListener<Drawable>() {
                     @Override

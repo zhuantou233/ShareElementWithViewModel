@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.zoom.shareelementwithviewmodel.ui;
+package us.zoom.shareelementwithviewmodel.ui.custom;
 
 import android.content.Context;
 import android.util.AttributeSet;

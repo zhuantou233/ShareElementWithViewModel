@@ -1,4 +1,4 @@
-package us.zoom.shareelementwithviewmodel.ui.fragment;
+package us.zoom.shareelementwithviewmodel.ui.grid;
 
 import android.os.Bundle;
 
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.transition.TransitionInflater;
 import android.transition.TransitionSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,26 +26,23 @@ import java.util.Map;
 import us.zoom.shareelementwithviewmodel.ImageListViewModel;
 import us.zoom.shareelementwithviewmodel.R;
 import us.zoom.shareelementwithviewmodel.databinding.FragmentListBinding;
-import us.zoom.shareelementwithviewmodel.ui.grid.GridMarginDecoration;
-import us.zoom.shareelementwithviewmodel.ui.grid.PhotoAdapter;
 
-public class ListFragment extends Fragment {
-    private static final String TAG = ListFragment.class.getSimpleName();
+public class GridListFragment extends Fragment {
+    private static final String TAG = GridListFragment.class.getSimpleName();
 
     private ImageListViewModel viewModel;
     private FragmentListBinding binding;
+    private int currentPosition;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (getActivity() != null) {
-            viewModel = ViewModelProviders.of(getActivity()).get(ImageListViewModel.class);
-        }
-        // Inflate the layout for this fragment
+        viewModel = ViewModelProviders.of(requireActivity()).get(ImageListViewModel.class);
+        viewModel.getCurrentPosition().observe(this, position -> currentPosition = position);
         binding = FragmentListBinding.inflate(inflater);
         binding.setLifecycleOwner(this);
         binding.setViewModel(viewModel);
-        binding.imageGrid.setAdapter(new PhotoAdapter(this::onListItemClick, this::onImageLoadCompleted));
+        binding.imageGrid.setAdapter(new GridPhotoAdapter(this::onListItemClick, this::onImageLoadCompleted));
         prepareTransitions();
         setupRecyclerView();
         return binding.getRoot();
@@ -65,7 +63,7 @@ public class ListFragment extends Fragment {
 
     private void onImageLoadCompleted(int position) {
         // Call startPostponedEnterTransition only when the 'selected' image loading is completed.
-        if (viewModel.getCurrentPosition().getValue() != position) {
+        if (currentPosition != position) {
             return;
         }
         startPostponedEnterTransition();
@@ -77,6 +75,7 @@ public class ListFragment extends Fragment {
 
         // Exclude the clicked card from the exit transition (e.g. the card will disappear immediately
         // instead of fading out with the rest to prevent an overlapping animation of fade and move).
+        assert getExitTransition() != null;
         ((TransitionSet) getExitTransition()).excludeTarget(view, true);
 
         ImageView transitioningView = view.findViewById(R.id.photo);
@@ -100,12 +99,14 @@ public class ListFragment extends Fragment {
                                        int oldBottom) {
                 binding.imageGrid.removeOnLayoutChangeListener(this);
                 final RecyclerView.LayoutManager layoutManager = binding.imageGrid.getLayoutManager();
-                View viewAtPosition = layoutManager.findViewByPosition(viewModel.getCurrentPosition().getValue());
+                assert layoutManager != null;
+                View viewAtPosition = layoutManager.findViewByPosition(currentPosition);
                 // Scroll to position if the view for the current position is null (not currently part of
                 // layout manager children), or it's not completely visible.
                 if (viewAtPosition == null || layoutManager
                         .isViewPartiallyVisible(viewAtPosition, false, true)) {
-                    binding.imageGrid.post(() -> layoutManager.scrollToPosition(viewModel.getCurrentPosition().getValue()));
+                    Log.i(TAG, "onLayoutChange: " + viewModel.getCurrentPosition().getValue());
+                    binding.imageGrid.post(() -> layoutManager.scrollToPosition(currentPosition));
                 }
             }
         });
@@ -113,6 +114,7 @@ public class ListFragment extends Fragment {
 
     private void setupRecyclerView() {
         GridLayoutManager gridLayoutManager = (GridLayoutManager) binding.imageGrid.getLayoutManager();
+        assert gridLayoutManager != null;
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -145,9 +147,9 @@ public class ListFragment extends Fragment {
                     @Override
                     public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                         // Locate the ViewHolder for the clicked position.
-                        PhotoAdapter.PhotoViewHolder selectedViewHolder = (PhotoAdapter.PhotoViewHolder) binding.imageGrid
-                                .findViewHolderForAdapterPosition(viewModel.getCurrentPosition().getValue());
-                        if (selectedViewHolder == null || selectedViewHolder.itemView == null) {
+                        GridPhotoAdapter.PhotoViewHolder selectedViewHolder = (GridPhotoAdapter.PhotoViewHolder) binding.imageGrid
+                                .findViewHolderForAdapterPosition(currentPosition);
+                        if (selectedViewHolder == null) {
                             return;
                         }
 

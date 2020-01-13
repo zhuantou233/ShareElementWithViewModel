@@ -1,13 +1,10 @@
-package us.zoom.shareelementwithviewmodel.ui.fragment;
+package us.zoom.shareelementwithviewmodel.ui.pager;
 
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
@@ -16,15 +13,13 @@ import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toolbar;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import us.zoom.shareelementwithviewmodel.ImageListViewModel;
-import us.zoom.shareelementwithviewmodel.MainActivity;
 import us.zoom.shareelementwithviewmodel.R;
-import us.zoom.shareelementwithviewmodel.ui.pager.DetailViewPagerAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,11 +28,13 @@ public class DetailPagerFragment extends Fragment {
 
     private ViewPager viewPager;
     private ImageListViewModel viewModel;
+    private int currentPosition;
+    private View.OnClickListener navigateListener = view -> requireActivity().onBackPressed();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.viewModel = ViewModelProviders.of(getActivity()).get(ImageListViewModel.class);
+        this.viewModel = ViewModelProviders.of(requireActivity()).get(ImageListViewModel.class);
         View view = inflater.inflate(R.layout.fragment_detail_pager, container, false);
         viewPager = view.findViewById(R.id.pager);
         viewModel.getPhotos().observe(this, photos -> viewPager.setAdapter(new DetailViewPagerAdapter(
@@ -45,7 +42,10 @@ public class DetailPagerFragment extends Fragment {
 
         // Set the current position and add a listener that will update the selection coordinator when
         // paging the images.
-        viewModel.getCurrentPosition().observe(this, position -> viewPager.setCurrentItem(position));
+        viewModel.getCurrentPosition().observe(this, position -> {
+            viewPager.setCurrentItem(position);
+            currentPosition = position;
+        });
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -54,6 +54,9 @@ public class DetailPagerFragment extends Fragment {
         });
 
         prepareSharedElementTransition();
+
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(navigateListener);
 
         // Avoid a postponeEnterTransition on orientation change, and postpone only of first creation.
         if (savedInstanceState == null) {
@@ -78,15 +81,16 @@ public class DetailPagerFragment extends Fragment {
                         // visible). To locate the fragment, call instantiateItem with the selection position.
                         // At this stage, the method will simply return the fragment at the position and will
                         // not create a new one.
+                        assert viewPager.getAdapter() != null;
                         Fragment currentFragment = (Fragment) viewPager.getAdapter()
-                                .instantiateItem(viewPager, viewModel.getCurrentPosition().getValue());
+                                .instantiateItem(viewPager, currentPosition);
                         View view = currentFragment.getView();
                         if (view == null) {
                             return;
                         }
 
                         // Map the first shared element name to the child ImageView.
-                        sharedElements.put(names.get(0), view.findViewById(R.id.photo));
+                        sharedElements.put(names.get(0), view.findViewById(R.id.photo_detail));
                     }
                 });
     }

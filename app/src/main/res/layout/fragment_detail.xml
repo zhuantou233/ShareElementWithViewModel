@@ -24,8 +24,8 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/padding_small">
 
-            <us.zoom.shareelementwithviewmodel.ui.ThreeTwoImageView
-                android:id="@+id/photo"
+            <us.zoom.shareelementwithviewmodel.ui.custom.ThreeTwoImageView
+                android:id="@+id/photo_detail"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"

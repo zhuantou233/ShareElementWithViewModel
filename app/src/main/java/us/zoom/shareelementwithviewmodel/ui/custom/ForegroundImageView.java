@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.zoom.shareelementwithviewmodel.ui;
+package us.zoom.shareelementwithviewmodel.ui.custom;
 
 
 import android.content.Context;
@@ -23,21 +23,23 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.ViewOutlineProvider;
-import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import us.zoom.shareelementwithviewmodel.R;
 
 
-public class ForegroundImageView extends ImageView {
+public class ForegroundImageView extends AppCompatImageView {
 
     private Drawable foreground;
 
     public ForegroundImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ForegroundView);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ForegroundImageView);
 
-        final Drawable d = a.getDrawable(R.styleable.ForegroundView_android_foreground);
+        final Drawable d = a.getDrawable(R.styleable.ForegroundImageView_android_foreground);
         if (d != null) {
             setForeground(d);
         }
@@ -59,7 +61,7 @@ public class ForegroundImageView extends ImageView {
     }
 
     @Override
-    protected boolean verifyDrawable(Drawable who) {
+    protected boolean verifyDrawable(@NonNull Drawable who) {
         return super.verifyDrawable(who) || (who == foreground);
     }
 

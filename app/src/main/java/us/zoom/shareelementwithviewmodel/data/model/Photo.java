@@ -79,8 +79,12 @@ public class Photo implements Parcelable {
         post_url = in.readString();
     }
 
+//    public String getPhotoUrl(int requestWidth) {
+//        return String.format(Locale.getDefault(), PHOTO_URL_BASE, requestWidth, id);
+//    }
+
     public String getPhotoUrl(int requestWidth) {
-        return String.format(Locale.getDefault(), PHOTO_URL_BASE, requestWidth, id);
+        return post_url;
     }
 
     @Override

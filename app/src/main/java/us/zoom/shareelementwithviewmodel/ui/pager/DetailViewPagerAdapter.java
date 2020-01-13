@@ -24,7 +24,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import java.util.List;
 
 import us.zoom.shareelementwithviewmodel.data.model.Photo;
-import us.zoom.shareelementwithviewmodel.ui.fragment.DetailFragment;
 
 /**
  * Adapter for paging detail views.
@@ -35,7 +34,7 @@ public class DetailViewPagerAdapter extends FragmentStatePagerAdapter {
     private int size;
     private List<Photo> photos;
 
-    public DetailViewPagerAdapter(@NonNull FragmentManager fm, int size, List<Photo> photos) {
+    DetailViewPagerAdapter(@NonNull FragmentManager fm, int size, List<Photo> photos) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.size = size;
         this.photos = photos;
@@ -46,6 +45,7 @@ public class DetailViewPagerAdapter extends FragmentStatePagerAdapter {
         return size;
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int position) {
         return new DetailFragment(photos.get(position));

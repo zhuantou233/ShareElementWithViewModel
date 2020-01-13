@@ -37,19 +37,20 @@ import us.zoom.shareelementwithviewmodel.data.model.Photo;
 import us.zoom.shareelementwithviewmodel.databinding.PhotoItemBinding;
 import us.zoom.shareelementwithviewmodel.ui.listener.OnGlideRequestListener;
 
-public class PhotoAdapter extends ListAdapter<Photo, PhotoAdapter.PhotoViewHolder> {
+public class GridPhotoAdapter extends ListAdapter<Photo, GridPhotoAdapter.PhotoViewHolder> {
 
     private static final PhotoDiffCallback diffCallback = new PhotoDiffCallback();
 
     private OnListItemClickListener onListItemClickListener;
     private OnLoadCompletedListener onLoadCompletedListener;
 
-    public PhotoAdapter(OnListItemClickListener onListItemClickListener, OnLoadCompletedListener onLoadCompletedListener) {
+    GridPhotoAdapter(OnListItemClickListener onListItemClickListener, OnLoadCompletedListener onLoadCompletedListener) {
         super(diffCallback);
         this.onListItemClickListener = onListItemClickListener;
         this.onLoadCompletedListener = onLoadCompletedListener;
     }
 
+    @NonNull
     @Override
     public PhotoViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         return new PhotoViewHolder(PhotoItemBinding.inflate(LayoutInflater.from(parent.getContext())), onLoadCompletedListener);
