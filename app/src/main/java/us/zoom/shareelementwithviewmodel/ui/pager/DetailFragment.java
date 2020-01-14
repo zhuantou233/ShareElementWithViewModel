@@ -37,7 +37,6 @@ public class DetailFragment extends Fragment implements OnGlideRequestListener {
         binding.setListener(this);
         binding.setData(photo);
 
-//        viewModel.getCurrentPhoto().observe(this, photo -> binding.setData(photo));
         return binding.getRoot();
     }
 
