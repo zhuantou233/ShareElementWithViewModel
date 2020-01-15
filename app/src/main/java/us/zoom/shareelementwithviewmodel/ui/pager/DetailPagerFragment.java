@@ -34,7 +34,7 @@ public class DetailPagerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.viewModel = ViewModelProviders.of(requireActivity()).get(ImageListViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(ImageListViewModel.class);
         View view = inflater.inflate(R.layout.fragment_detail_pager, container, false);
         viewPager = view.findViewById(R.id.pager);
         viewModel.getPhotos().observe(this, photos -> viewPager.setAdapter(new DetailViewPagerAdapter(
